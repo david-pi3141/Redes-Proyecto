@@ -1,0 +1,155 @@
+
+!
+upgrade fpd auto
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+ip tcp synwait-time 5
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ no ip address
+ shutdown
+ duplex auto
+!
+interface GigabitEthernet0/0
+ no ip address
+ shutdown
+ duplex full
+ speed 1000
+ media-type gbic
+ negotiation auto
+!
+interface Serial1/0
+ description HDLC a s1/1 de R1
+ ip address 200.10.10.2 255.255.255.252
+ serial restart-delay 0
+!
+interface Serial1/1
+ description HDLC a s1/1 de R3
+ ip address 200.10.10.9 255.255.255.252
+ serial restart-delay 0
+!
+interface Serial1/2
+ no ip address
+ encapsulation frame-relay
+ serial restart-delay 0
+!
+interface Serial1/2.1 point-to-point
+ description Frame Relay a R1
+ ip address 200.10.10.14 255.255.255.252
+ frame-relay interface-dlci 202   
+!
+interface Serial1/2.2 point-to-point
+ description Frame Relay a R3
+ ip address 200.10.10.21 255.255.255.252
+ frame-relay interface-dlci 103   
+!
+interface Serial1/3
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface GigabitEthernet2/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet3/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet4/0
+ no ip address
+ shutdown
+ negotiation auto
+!
+router bgp 45000
+ bgp log-neighbor-changes
+ neighbor 200.10.10.1 remote-as 65000
+ neighbor 200.10.10.10 remote-as 35000
+ neighbor 200.10.10.13 remote-as 65000
+ neighbor 200.10.10.22 remote-as 35000
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+!
+!
+no cdp log mismatch duplex
+!
+!
+!
+control-plane
+!
+!
+!
+mgcp profile default
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+ transport input all
+!
+!
+end
